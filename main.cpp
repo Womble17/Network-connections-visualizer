@@ -1,7 +1,8 @@
 #include <iostream>
-#include <string>
+#include <memory>
 
 #include <MainController/MainController.hpp>
+#include <includes/boost_1_65_1/boost/lockfree/queue.hpp>
 
 using namespace std;
 
@@ -10,10 +11,13 @@ int main()
     string logger_ = "\n[MAIN FUNCTION] ";
     cout << logger_ << "Starting program";
 
-    cout << logger_ << "Starting Main Controller";
-    MainController mainController;
+    cout << logger_ << "Starting Main Controller\n";
 
-    cout << logger_ << "Finishing program" << std::endl;
+    std::unique_ptr<MainController> mainController(new MainController());
+
+    mainController->run();
+
+    cout << "\n" << logger_ << "Finishing program\n\n" << std::endl;
 
     return 0;
 }
