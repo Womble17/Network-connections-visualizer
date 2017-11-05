@@ -26,13 +26,13 @@ void Analyser::run()
 {
     cout << logger_ << "Runner";
 
-    int temp;
+//    string temp;
     string IP;
     while(threadRunning_)
     {
-        if(inputQueue_->pop(temp))
+        if(inputQueue_->pop(IP))
         {
-            IP = to_string(temp);
+            //IP = to_string(temp);
             cout << logger_ + IP;
             analysePacket(IP);
         }
@@ -43,11 +43,13 @@ void Analyser::run()
 void Analyser::analysePacket(string IP)
 {
 
-    if(connections.find(IP) != connections.end()){
-        // new connection to add
+    if(connections.find(IP) == connections.end()){
+        cout << logger_ << "new connection: " << IP;
+        connections[IP] = make_shared<Connection>(IP);
     }
     else
     {
-        // connection already in map - updating
+        connections[IP]->counter_++;
+        cout << logger_ << "updating connection: IP: " << IP << " counter: " << connections[IP]->counter_;
     }
 }

@@ -27,17 +27,5 @@ void MainController::run()
 
     unique_ptr<Reader> reader(new Reader(queue_1));
     unique_ptr<Analyser> analyser(new Analyser(queue_1, queue_2));
-    //unique_ptr<Drawer> drawer(new Drawer());
-
-//    string IP;
-//    while(cin >> IP)
-//    {
-//        if (IP.find("192.168") == string::npos)
-//        {
-//            analyser->addPacket("IP");
-//            analyser->addPacket("IP");
-//            analyser->addPacket("IP");
-//        }
-//    }
 }
 

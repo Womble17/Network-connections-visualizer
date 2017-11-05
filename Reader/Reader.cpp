@@ -19,20 +19,18 @@ Reader::~Reader()
     internalThread_.join();
 }
 
-void Reader::printstuff()
-{
-    cout << "dupa" << endl;
-}
-
 void Reader::run()
 {
     cout << logger_ << "Runner";
 
-    int temp;
+    string temp;
 
     while(cin >> temp)
     {
-        cout << logger_ + to_string(temp);
+        if(temp.find("192.168") != string::npos)
+            continue;
+
+        cout << logger_ + temp;
         outputQueue_->push(temp);
     }
 }

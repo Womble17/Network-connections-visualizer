@@ -8,7 +8,7 @@
 #include <boost/lockfree/spsc_queue.hpp>
 
 
-using queue_type = boost::lockfree::spsc_queue<int>;
+using queue_type = boost::lockfree::spsc_queue<std::string>;
 using queue_ptr = std::shared_ptr<queue_type>;
 
 class Reader
@@ -16,7 +16,6 @@ class Reader
 public:
     Reader(queue_ptr& outputQueue);
     ~Reader();
-    void printstuff();
     void run();
 
 private:
