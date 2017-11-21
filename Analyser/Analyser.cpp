@@ -6,7 +6,7 @@
 
 using namespace std;
 
-Analyser::Analyser(queue_ptr& inputQueue, queue_ptr& outputQueue) :
+Analyser::Analyser(string_queue_ptr& inputQueue, pair_queue_ptr& outputQueue) :
     inputQueue_(inputQueue),
     outputQueue_(outputQueue),
     threadRunning_(true),
@@ -49,7 +49,9 @@ void Analyser::analysePacket(string IP)
     }
     else
     {
-        connections[IP]->counter_++;
-        cout << logger_ << "updating connection: IP: " << IP << " counter: " << connections[IP]->counter_;
+        //connections[IP]->ping();
+        cout << logger_ << "updating connection: IP: " << IP;
     }
+
+    outputQueue_->push(make_pair(connections[IP]->geoLatitude_, connections[IP]->geoLongtitude_));
 }

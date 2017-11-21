@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Reader::Reader(queue_ptr& outputQueue) :
+Reader::Reader(string_queue_ptr& outputQueue) :
     outputQueue_(outputQueue),
     threadRunning_(true),
     internalThread_(&Reader::run, this)

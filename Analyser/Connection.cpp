@@ -1,5 +1,6 @@
 #include "Connection.hpp"
 
+#include <chrono>
 #include <iostream>
 #include <vector>
 
@@ -12,9 +13,22 @@ Connection::Connection(string IP) : IP_(IP)
     logger_ = "\n[CONNECTION] ";
     cout << logger_ << "Constructor " << IP;
 
-    counter_ = 1;
-
     findGeolocation();
+}
+
+void Connection::addPacket()
+{
+    timestamps_.push(chrono::system_clock::now());
+}
+
+void Connection::updateTimestamps()
+{
+    auto now = chrono::system_clock::now();
+
+    while(chrono::duration_cast<chrono::milliseconds>(timestamps_.front() - now).count() > 1000)
+    {
+        timestamps_.pop();
+    }
 }
 
 void Connection::findGeolocation()
@@ -37,9 +51,19 @@ void Connection::findGeolocation()
 
     vector<string> coordinates;
 
-    boost::split(coordinates, curlResult, [](char c){return c == '\n';});
+    if(!curlResult.empty())
+    {
+        boost::split(coordinates, curlResult, [](char c){return c == '\n';});
+        geoLatitude_ = stof(coordinates[0]);
+        geoLongtitude_ = stof(coordinates[1]);
+    }
+    else
+    {
+        cout << logger_ << "EMPTY COORDINATES";
+        geoLatitude_ = 0.0;
+        geoLongtitude_ = 0.0;
+    }
 
-    cout << endl << coordinates[0] << " " << coordinates[1] << endl;
-    geoLatitude_ = stof(coordinates[0]);
-    geoLongtitude_ = stof(coordinates[1]);
+    cout << endl << geoLatitude_ << " " << geoLongtitude_ << endl;
+
 }

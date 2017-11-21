@@ -8,18 +8,18 @@
 #include <boost/lockfree/spsc_queue.hpp>
 
 
-using queue_type = boost::lockfree::spsc_queue<std::string>;
-using queue_ptr = std::shared_ptr<queue_type>;
+using string_queue_type = boost::lockfree::spsc_queue<std::string>;
+using string_queue_ptr = std::shared_ptr<string_queue_type>;
 
 class Reader
 {
 public:
-    Reader(queue_ptr& outputQueue);
+    Reader(string_queue_ptr& outputQueue);
     ~Reader();
     void run();
 
 private:
-    queue_ptr outputQueue_;
+    string_queue_ptr outputQueue_;
     bool threadRunning_;
     std::thread internalThread_;
     std::string logger_;

@@ -1,6 +1,8 @@
 #ifndef CONNECTION_HPP
 #define CONNECTION_HPP
 
+#include <chrono>
+#include <queue>
 #include <string>
 
 class Connection
@@ -8,15 +10,18 @@ class Connection
 public:
     Connection(std::string IP);
 
-    int counter_;
     float geoLatitude_;
     float geoLongtitude_;
-    std::string IP_;
 
-    void findGeolocation();
+    void addPacket();
+    void updateTimestamps();
+
 private:
     std::string logger_;
+    std::queue<std::chrono::system_clock::time_point> timestamps_;
 
+    void findGeolocation();
+    std::string IP_;
 };
 
 #endif // CONNECTION_HPP

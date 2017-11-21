@@ -9,19 +9,22 @@
 #include <boost/lockfree/spsc_queue.hpp>
 #include "Connection.hpp"
 
-using queue_type = boost::lockfree::spsc_queue<std::string>;
-using queue_ptr = std::shared_ptr<queue_type>;
+using string_queue_type = boost::lockfree::spsc_queue<std::string>;
+using string_queue_ptr = std::shared_ptr<string_queue_type>;
+
+using pair_queue_type = boost::lockfree::spsc_queue<std::pair<float,float>>;
+using pair_queue_ptr = std::shared_ptr<pair_queue_type>;
 
 class Analyser
 {
 public:
-    Analyser(queue_ptr& inputQueue, queue_ptr& outputQueue);
+    Analyser(string_queue_ptr& inputQueue, pair_queue_ptr& outputQueue);
     ~Analyser();
     void run();
 
 private:
-    queue_ptr inputQueue_;
-    queue_ptr outputQueue_;
+    string_queue_ptr inputQueue_;
+    pair_queue_ptr outputQueue_;
     bool threadRunning_;
     std::thread internalThread_;
     std::string logger_;

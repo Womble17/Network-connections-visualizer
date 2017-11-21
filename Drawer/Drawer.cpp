@@ -1,17 +1,41 @@
 #include "Drawer.hpp"
 
 #include <iostream>
+#include <memory>
 
 using namespace std;
 
-Drawer::Drawer()
+Drawer::Drawer(pair_queue_ptr& inputQueue, QApplication& app) :
+    inputQueue_(inputQueue)
 {
-    logger_ = "\n[DRAWER ] ";
+    logger_ = "\n[DRAWER] ";
+    cout << logger_ << "Constructor ";
 
-    cout << logger_ << "Constructor";
+    run(app);
 }
 
-void Drawer::run(int a){
-    cout << logger_ << a;
+Drawer::~Drawer()
+{
+}
+
+void Drawer::run(QApplication& app)
+{
+    Map* window = new Map(inputQueue_);
+
+
+    window->resize(1400, 653);
+    window->setWindowTitle("Map");
+
+    QPalette palette;
+    palette.setBrush(window->backgroundRole(), QBrush(QImage("world_truncated.jpg")));
+
+    window->setPalette(palette);
+
+    window->show();
+
+
+    app.exec();
+
+    delete window;
 }
 
