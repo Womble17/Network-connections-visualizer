@@ -24,13 +24,12 @@ void Reader::run()
     cout << logger_ << "Runner";
 
     string temp;
-
     while(cin >> temp)
     {
         if(temp.find("192.168") != string::npos)
             continue;
 
-        cout << logger_ + temp;
+        //cout << logger_ + temp;
         outputQueue_->push(temp);
     }
 }

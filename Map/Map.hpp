@@ -23,8 +23,8 @@ class Map : public QWidget {
     void timerEvent(QTimerEvent *event);
 
   private:
-    int x_;
-    int y_;
+    float wrX_ = 17.038538;
+    float wrY_ = 51.107883;
     int timerId_;
     std::pair<float,float> coordinates_;
     std::vector<std::pair<float,float>> CoordinateVector_;

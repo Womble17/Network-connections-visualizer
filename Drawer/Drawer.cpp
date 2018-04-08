@@ -22,7 +22,6 @@ void Drawer::run(QApplication& app)
 {
     Map* window = new Map(inputQueue_);
 
-
     window->resize(1400, 653);
     window->setWindowTitle("Map");
 
@@ -32,7 +31,6 @@ void Drawer::run(QApplication& app)
     window->setPalette(palette);
 
     window->show();
-
 
     app.exec();
 

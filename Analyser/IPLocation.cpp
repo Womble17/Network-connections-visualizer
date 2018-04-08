@@ -1,4 +1,4 @@
-#include "Connection.hpp"
+#include "IPLocation.hpp"
 
 #include <chrono>
 #include <iostream>
@@ -8,7 +8,7 @@
 
 using namespace std;
 
-Connection::Connection(string IP) : IP_(IP)
+IPLocation::IPLocation(string IP) : IP_(IP)
 {
     logger_ = "\n[CONNECTION] ";
     cout << logger_ << "Constructor " << IP;
@@ -16,12 +16,12 @@ Connection::Connection(string IP) : IP_(IP)
     findGeolocation();
 }
 
-void Connection::addPacket()
+void IPLocation::addPacket()
 {
     timestamps_.push(chrono::system_clock::now());
 }
 
-void Connection::updateTimestamps()
+void IPLocation::updateTimestamps()
 {
     auto now = chrono::system_clock::now();
 
@@ -31,7 +31,7 @@ void Connection::updateTimestamps()
     }
 }
 
-void Connection::findGeolocation()
+void IPLocation::findGeolocation()
 {
     string request = "curl -s http://ip-api.com/line/"+IP_+"?fields=lat,lon";
     FILE* pipe = popen(request.c_str(), "r");

@@ -2,17 +2,22 @@
 #include <QTimer>
 #include <QTextStream>
 #include <QPixmap>
+#include <QPainterPath>
+#include <iostream>
 #include <boost/algorithm/string.hpp>
 
 #include "Map.hpp"
+
+#define LINE_HEIGHT 30
+
+using namespace std;
 
 Map::Map(pair_queue_ptr& inputQueue, QWidget *parent) :
     QWidget(parent),
     inputQueue_(inputQueue)
 {
-
-  x_ = 1;
-  timerId_ = startTimer(100);
+    cout  << endl << "MAP constructor";
+    timerId_ = startTimer(10);
 }
 
 void Map::paintEvent(QPaintEvent *e)
@@ -20,16 +25,32 @@ void Map::paintEvent(QPaintEvent *e)
     Q_UNUSED(e);
 
     QPainter painter(this);
+    QPainterPath path;
 
-    painter.setPen(QPen(QBrush("#570000"), 4));
+    path.moveTo(lonToPixels(wrX_), latToPixels(wrY_));
 
+    painter.setPen(QPen(QBrush("#0000aa"), 1));
+    cout << endl << CoordinateVector_.size();
     //killTimer(timerId);
-    for(std::pair<float,float> coords : CoordinateVector_){
-        //painter.drawLine(766,187, latToPixels(coords.second), lonToPixels(coords.first));
-        //painter.drawPoint(latToPixels(coords.second), lonToPixels(coords.first));
-        painter.drawEllipse(latToPixels(coords.second), lonToPixels(coords.first), 4, 4);
+    for(pair<float,float> coords : CoordinateVector_){
+        if((coords.first == 0.0 && coords.second == 0.0))
+        {
+            path.moveTo(lonToPixels(wrX_), latToPixels(wrY_));
+            continue;
+        }
+        int xDist = std::abs(lonToPixels(coords.first) - path.currentPosition().rx());
+        path.cubicTo(
+            (lonToPixels(coords.first) + path.currentPosition().rx()) / 2,
+            std::min(latToPixels(coords.second), (int)path.currentPosition().ry()) - xDist/5,
+            (lonToPixels(coords.first) + path.currentPosition().rx()) / 2,
+            std::min(latToPixels(coords.second), (int)path.currentPosition().ry()) - xDist/5,
 
+            lonToPixels(coords.first),
+            latToPixels(coords.second)
+       );
+        painter.drawPath(path);
     }
+    cout << endl << "DRAW IT BITCH";
 }
 
 void Map::timerEvent(QTimerEvent *e) {
@@ -39,16 +60,15 @@ void Map::timerEvent(QTimerEvent *e) {
     if(inputQueue_->pop(coordinates_))
     {
         CoordinateVector_.push_back(coordinates_);
-        x_ += 1;
         repaint();
     }
 }
 
-int Map::latToPixels(float lat){
+int Map::lonToPixels(float lat){
 
     return 700 + (int)(lat * 686/180);
 }
 
-int Map::lonToPixels(float lon){
+int Map::latToPixels(float lon){
     return 392 - (int)(lon * 356/90);
 }

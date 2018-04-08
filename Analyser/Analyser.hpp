@@ -7,7 +7,7 @@
 #include <thread>
 
 #include <boost/lockfree/spsc_queue.hpp>
-#include "Connection.hpp"
+#include "IPLocation.hpp"
 
 using string_queue_type = boost::lockfree::spsc_queue<std::string>;
 using string_queue_ptr = std::shared_ptr<string_queue_type>;
@@ -28,9 +28,11 @@ private:
     bool threadRunning_;
     std::thread internalThread_;
     std::string logger_;
-    std::map<std::string, std::shared_ptr<Connection>> connections;
+    std::map<std::string, std::shared_ptr<IPLocation>> ipLocations;
 
-    void analysePacket(std::string);
+    void analysePacket(std::string&);
+    std::vector<std::string> getMidIPs(std::string&);
+
 };
 
 #endif // ANALYSER_HPP

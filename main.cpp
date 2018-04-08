@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 
     cout << logger_ << "Starting Main Controller\n";
 
-    std::unique_ptr<MainController> mainController(new MainController());
+    std::unique_ptr<MainController> mainController = std::make_unique<MainController>();
 
     QApplication app(argc, argv);
 

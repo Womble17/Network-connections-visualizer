@@ -5,10 +5,10 @@
 #include <queue>
 #include <string>
 
-class Connection
+class IPLocation
 {
 public:
-    Connection(std::string IP);
+    IPLocation(std::string IP);
 
     float geoLatitude_;
     float geoLongtitude_;
