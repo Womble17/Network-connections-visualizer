@@ -8,11 +8,8 @@
 
 #include <boost/lockfree/spsc_queue.hpp>
 
-using string_queue_type = boost::lockfree::spsc_queue<std::string>;
-using string_queue_ptr = std::shared_ptr<string_queue_type>;
+#include <Protocols/Aliases.hpp>
 
-using pair_queue_type = boost::lockfree::spsc_queue<std::pair<float,float>>;
-using pair_queue_ptr = std::shared_ptr<pair_queue_type>;
 
 class MainController
 {

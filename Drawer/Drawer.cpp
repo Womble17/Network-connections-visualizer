@@ -5,11 +5,11 @@
 
 using namespace std;
 
-Drawer::Drawer(pair_queue_ptr& inputQueue, QApplication& app) :
+Drawer::Drawer(drawings_queue_ptr& inputQueue, QApplication& app) :
     inputQueue_(inputQueue)
 {
-    logger_ = "\n[DRAWER] ";
-    cout << logger_ << "Constructor ";
+    logger_ = "\n[DRAWER]\n ";
+    //cout << logger_ << "Constructor ";
 
     run(app);
 }

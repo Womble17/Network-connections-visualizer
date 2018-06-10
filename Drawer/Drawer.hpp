@@ -5,23 +5,22 @@
 #include <string>
 #include <QApplication>
 
-#include <Map/Map.hpp>
-
 #include <boost/lockfree/spsc_queue.hpp>
 
-using pair_queue_type = boost::lockfree::spsc_queue<std::pair<float,float>>;
-using pair_queue_ptr = std::shared_ptr<pair_queue_type>;
+#include <Map/Map.hpp>
+#include <Protocols/Aliases.hpp>
+#include <Protocols/DrawingPackage.hpp>
 
 class Drawer
 {
 public:
-    Drawer(pair_queue_ptr& inputQueue, QApplication& app);
+    Drawer(drawings_queue_ptr& inputQueue, QApplication& app);
     ~Drawer();
 
     void run(QApplication& app);
 
 private:
-    pair_queue_ptr inputQueue_;
+    drawings_queue_ptr inputQueue_;
     bool threadRunning_;
     std::string logger_;
 };

@@ -7,8 +7,7 @@
 
 #include <boost/lockfree/spsc_queue.hpp>
 
-using pair_queue_type = boost::lockfree::spsc_queue<std::pair<float,float>>;
-using pair_queue_ptr = std::shared_ptr<pair_queue_type>;
+#include <Protocols/Aliases.hpp>
 
 
 class Map : public QWidget {
@@ -16,7 +15,7 @@ class Map : public QWidget {
   Q_OBJECT
 
   public:
-    Map(pair_queue_ptr& inputQueue, QWidget *parent = 0);
+    Map(drawings_queue_ptr& inputQueue, QWidget *parent = 0);
 
   protected:
     void paintEvent(QPaintEvent *event);
@@ -26,9 +25,8 @@ class Map : public QWidget {
     float wrX_ = 17.038538;
     float wrY_ = 51.107883;
     int timerId_;
-    std::pair<float,float> coordinates_;
-    std::vector<std::pair<float,float>> CoordinateVector_;
-    pair_queue_ptr inputQueue_;
+    drawings_queue_ptr inputQueue_;
+    std::shared_ptr<DrawingPackage> coordinates_;
 
     int latToPixels(float lat);
     int lonToPixels(float lon);

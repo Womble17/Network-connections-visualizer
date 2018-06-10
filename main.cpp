@@ -10,9 +10,9 @@ using namespace std;
 int main(int argc, char** argv)
 {
     string logger_ = "\n[MAIN FUNCTION] ";
-    cout << logger_ << "Starting program";
+    //cout << logger_ << "Starting program";
 
-    cout << logger_ << "Starting Main Controller\n";
+    //cout << logger_ << "Starting Main Controller\n";
 
     std::unique_ptr<MainController> mainController = std::make_unique<MainController>();
 
@@ -20,7 +20,7 @@ int main(int argc, char** argv)
 
     mainController->run(app);
 
-    cout << "\n" << logger_ << "Finishing program\n\n" << std::endl;
+    //cout << "\n" << logger_ << "Finishing program\n\n" << std::endl;
 
     return 0;
 }

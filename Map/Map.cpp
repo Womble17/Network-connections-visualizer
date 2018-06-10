@@ -1,10 +1,14 @@
+#include <iostream>
+
 #include <QPainter>
 #include <QTimer>
 #include <QTextStream>
 #include <QPixmap>
 #include <QPainterPath>
-#include <iostream>
+
 #include <boost/algorithm/string.hpp>
+
+#include <Protocols/DrawingPackage.hpp>
 
 #include "Map.hpp"
 
@@ -12,45 +16,54 @@
 
 using namespace std;
 
-Map::Map(pair_queue_ptr& inputQueue, QWidget *parent) :
+Map::Map(drawings_queue_ptr& inputQueue, QWidget *parent) :
     QWidget(parent),
     inputQueue_(inputQueue)
 {
-    cout  << endl << "MAP constructor";
+    //cout  << endl << "MAP constructor";
     timerId_ = startTimer(10);
 }
 
 void Map::paintEvent(QPaintEvent *e)
 {
+
     Q_UNUSED(e);
 
     QPainter painter(this);
-    QPainterPath path;
 
-    path.moveTo(lonToPixels(wrX_), latToPixels(wrY_));
 
-    painter.setPen(QPen(QBrush("#0000aa"), 1));
-    cout << endl << CoordinateVector_.size();
     //killTimer(timerId);
-    for(pair<float,float> coords : CoordinateVector_){
-        if((coords.first == 0.0 && coords.second == 0.0))
+    //cout << "paint data: " << to_string(coordinates_->drawDataPackage.size()) << endl;
+    for(const auto& data : coordinates_->drawDataPackage)
+    {
+        //cout << "TO DRAW: " << to_string(data.x1) << " " << to_string(data.y1) << " " << to_string(data.x2) << " " << to_string(data.y2) << endl;
+        if((data.x1 == 0.0 && data.y1 == 0.0) || (data.x2 == 0.0 && data.y2 == 0.0))
         {
-            path.moveTo(lonToPixels(wrX_), latToPixels(wrY_));
             continue;
         }
-        int xDist = std::abs(lonToPixels(coords.first) - path.currentPosition().rx());
-        path.cubicTo(
-            (lonToPixels(coords.first) + path.currentPosition().rx()) / 2,
-            std::min(latToPixels(coords.second), (int)path.currentPosition().ry()) - xDist/5,
-            (lonToPixels(coords.first) + path.currentPosition().rx()) / 2,
-            std::min(latToPixels(coords.second), (int)path.currentPosition().ry()) - xDist/5,
 
-            lonToPixels(coords.first),
-            latToPixels(coords.second)
+        // set brush color
+        painter.setPen(QPen(QBrush(QColor(data.r, data.g, data.b)), 1));
+
+        QPainterPath path;
+        // set brush to x1 y1
+        path.moveTo(lonToPixels(data.x1), latToPixels(data.y1));
+
+        // draw line to x2 y2
+        int xDist = std::abs(lonToPixels(data.x1) - lonToPixels(data.x2));
+        path.cubicTo(
+            // control point 1
+            (lonToPixels(data.x2) + path.currentPosition().rx()) / 2,
+            std::min(latToPixels(data.y2), (int)path.currentPosition().ry()) - xDist/5,
+            // control point 2
+            (lonToPixels(data.x2) + path.currentPosition().rx()) / 2,
+            std::min(latToPixels(data.y2), (int)path.currentPosition().ry()) - xDist/5,
+            // end point
+            lonToPixels(data.x2),
+            latToPixels(data.y2)
        );
-        painter.drawPath(path);
+       painter.drawPath(path);
     }
-    cout << endl << "DRAW IT BITCH";
 }
 
 void Map::timerEvent(QTimerEvent *e) {
@@ -59,7 +72,11 @@ void Map::timerEvent(QTimerEvent *e) {
 
     if(inputQueue_->pop(coordinates_))
     {
-        CoordinateVector_.push_back(coordinates_);
+        for(auto& data : coordinates_->drawDataPackage)
+        {
+            //cout << to_string(data.x1) << " " << to_string(data.x2) << endl;
+        }
+
         repaint();
     }
 }

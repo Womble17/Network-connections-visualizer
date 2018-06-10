@@ -9,8 +9,8 @@ Reader::Reader(string_queue_ptr& outputQueue) :
     threadRunning_(true),
     internalThread_(&Reader::run, this)
 {
-    logger_ = "\n[READER] ";
-    cout << logger_ << "Constructor";
+    logger_ = "\n[READER]\n ";
+    //cout << logger_ << "Constructor";
 
 }
 
@@ -21,16 +21,23 @@ Reader::~Reader()
 
 void Reader::run()
 {
-    cout << logger_ << "Runner";
+    //cout << logger_ << "Runner";
 
-    string temp;
-    while(cin >> temp)
+    string IP;
+    while(cin >> IP)
     {
-        if(temp.find("192.168") != string::npos)
+        if(IP.find("192.168") != string::npos)
             continue;
 
-        //cout << logger_ + temp;
-        outputQueue_->push(temp);
+        int firstPart = stoi(IP);
+
+        if(firstPart >= 224 && firstPart <= 240)
+        {
+            continue;
+        }
+
+        ////cout << logger_ + IP;
+        outputQueue_->push(IP);
     }
 }
 
