@@ -9,8 +9,8 @@ Reader::Reader(string_queue_ptr& outputQueue) :
     threadRunning_(true),
     internalThread_(&Reader::run, this)
 {
-    logger_ = "\n[READER]\n ";
-    //cout << logger_ << "Constructor";
+    logger_ = "\n[READER] ";
+    cout << logger_ << "Constructor";
 
 }
 
@@ -21,8 +21,9 @@ Reader::~Reader()
 
 void Reader::run()
 {
-    //cout << logger_ << "Runner";
+    cout << logger_ << "Runner";
 
+    int counter = 0;
     string IP;
     while(cin >> IP)
     {
@@ -36,7 +37,7 @@ void Reader::run()
             continue;
         }
 
-        ////cout << logger_ + IP;
+        cout << logger_ + to_string(counter++);
         outputQueue_->push(IP);
     }
 }

@@ -20,7 +20,7 @@ Map::Map(drawings_queue_ptr& inputQueue, QWidget *parent) :
     QWidget(parent),
     inputQueue_(inputQueue)
 {
-    //cout  << endl << "MAP constructor";
+    cout  << endl << "MAP constructor";
     timerId_ = startTimer(10);
 }
 
@@ -31,12 +31,16 @@ void Map::paintEvent(QPaintEvent *e)
 
     QPainter painter(this);
 
+    if(coordinates_ == nullptr)
+    {
+        return;
+    }
 
     //killTimer(timerId);
-    //cout << "paint data: " << to_string(coordinates_->drawDataPackage.size()) << endl;
+    cout << "paint data: " << to_string(coordinates_->drawDataPackage.size()) << endl;
     for(const auto& data : coordinates_->drawDataPackage)
     {
-        //cout << "TO DRAW: " << to_string(data.x1) << " " << to_string(data.y1) << " " << to_string(data.x2) << " " << to_string(data.y2) << endl;
+        cout << "TO DRAW: " << to_string(data.x1) << " " << to_string(data.y1) << " " << to_string(data.x2) << " " << to_string(data.y2) << endl;
         if((data.x1 == 0.0 && data.y1 == 0.0) || (data.x2 == 0.0 && data.y2 == 0.0))
         {
             continue;
@@ -74,7 +78,7 @@ void Map::timerEvent(QTimerEvent *e) {
     {
         for(auto& data : coordinates_->drawDataPackage)
         {
-            //cout << to_string(data.x1) << " " << to_string(data.x2) << endl;
+            cout << to_string(data.x1) << " " << to_string(data.x2) << endl;
         }
 
         repaint();

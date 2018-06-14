@@ -9,7 +9,7 @@ Drawer::Drawer(drawings_queue_ptr& inputQueue, QApplication& app) :
     inputQueue_(inputQueue)
 {
     logger_ = "\n[DRAWER]\n ";
-    //cout << logger_ << "Constructor ";
+    cout << logger_ << "Constructor ";
 
     run(app);
 }

@@ -14,13 +14,13 @@ MainController::MainController()
 {
     logger_ = "\n[MAIN CONTROLLER]\n ";
 
-    //cout << logger_ << "Constructor";
+    cout << logger_ << "Constructor";
 }
 
 void MainController::run(QApplication& app)
 {
 
-    //cout << logger_ << "Main runner";
+    cout << logger_ << "Main runner";
 
     string_queue_ptr queue_1 = make_shared<string_queue_type>(1000);
     drawings_queue_ptr queue_2 = make_shared<drawings_queue_type>(1000);

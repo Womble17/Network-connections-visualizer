@@ -31,7 +31,7 @@ private:
     std::map< std::pair<std::string, std::string>, std::shared_ptr<LinkData> > linkDataMap_;
     std::map< std::string, std::pair<float, float> > ipLocations_;
 
-    unsigned max_throughput = 1;
+    unsigned max_throughput = 10;
 
     void analyseNewPacket(std::string&);
     void updateTimestamps();
