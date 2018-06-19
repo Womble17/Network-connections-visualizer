@@ -25,7 +25,7 @@ HEADERS += \
     Protocols/Aliases.hpp
 
 INCLUDEPATH += \
-    /home/marcin/workspace/includes
+    ../includes
 
 LIBS += \
     -pthread \

@@ -23,7 +23,7 @@ void Drawer::run(QApplication& app)
     Map* window = new Map(inputQueue_);
 
     window->resize(1400, 653);
-    window->setWindowTitle("Map");
+    window->setWindowTitle("Network Connections Visualizer");
 
     QPalette palette;
     palette.setBrush(window->backgroundRole(), QBrush(QImage("world_truncated.jpg")));
