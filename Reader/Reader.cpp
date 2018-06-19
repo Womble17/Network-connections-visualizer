@@ -27,11 +27,13 @@ void Reader::run()
     string IP;
     while(cin >> IP)
     {
+        // filter local communication
         if(IP.find("192.168") != string::npos)
             continue;
 
         int firstPart = stoi(IP);
 
+        // filter reserved IPs
         if(firstPart >= 224 && firstPart <= 240)
         {
             continue;

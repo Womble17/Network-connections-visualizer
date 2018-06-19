@@ -18,6 +18,7 @@ int main(int argc, char** argv)
 
     QApplication app(argc, argv);
 
+
     mainController->run(app);
 
     cout << "\n" << logger_ << "Finishing program\n\n" << std::endl;

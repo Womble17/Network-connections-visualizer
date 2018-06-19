@@ -42,6 +42,7 @@ void Analyser::run()
         }
         // for each link update timestamps
         updateTimestamps();
+
         // create data package
         // send data package
         prepareAndSendDataPackage();
@@ -50,10 +51,23 @@ void Analyser::run()
 
 void Analyser::analyseNewPacket(string& IP)
 {
-    cout << __FUNCTION__ << endl;
+    cout << logger_ << __FUNCTION__;
+
+    if(notRespondingIP_.count(IP))
+    {
+        cout << logger_ << "skipping not responding IP";
+        return;
+    }
 
     // run traceroute
     vector<string> midLocationIPs = getMidIPs(IP);
+
+    // traceroute query failed, add IP to list of not responding IPs
+    if(midLocationIPs.size() < 3)
+    {
+        setIpAsNotResponding(IP);
+        return;
+    }
 
     for(auto& midIP : midLocationIPs)
     {
@@ -72,16 +86,12 @@ void Analyser::analyseNewPacket(string& IP)
         }
     }
 
-    if(midLocationIPs.size() < 2)
-    {
-        return;
-    }
     for(unsigned i = 0; i < midLocationIPs.size() - 1; ++i)
     {
         // for each link
         std::pair<string, string> linkNodes = make_pair(midLocationIPs[i], midLocationIPs[i+1]);
 
-        // create new if needed
+        // create new link data if needed
         if(linkDataMap_.count(linkNodes) == 0)
         {
             linkDataMap_[linkNodes] = make_shared<LinkData>();
@@ -92,11 +102,16 @@ void Analyser::analyseNewPacket(string& IP)
     }
 }
 
+/**
+ * @brief Analyser::getMidIPs method running traceroute for given IP address
+ * @param IP
+ * @return vector of IP adresses returned by traceroute query
+ */
 vector<string> Analyser::getMidIPs(string& IP)
 {
-    cout << __FUNCTION__ << endl;
-    string request = "sudo traceroute " +  IP + " -w 0.05 -n -I | tail -n+2 | awk '{ print $2 }'";
-    cout << request << endl;
+    cout << logger_ << __FUNCTION__;
+    string request = "sudo traceroute " +  IP + " -w 0.5 -n -I | tail -n+2 | awk '{ print $2 }'";
+    cout << logger_ << request;
     FILE* pipe = popen(request.c_str(), "r");
 
     if (!pipe) return std::vector<string>();
@@ -110,7 +125,7 @@ vector<string> Analyser::getMidIPs(string& IP)
             tracerouteResult += buffer;
     }
 
-    cout << "TRACEROUTE RESULTS: for IP: " << IP << ":\n" << tracerouteResult << endl;
+    cout << logger_ << "TRACEROUTE RESULTS: for IP: " << IP << ":\n" << tracerouteResult;
 
     vector<string> midIPs;
     boost::split(midIPs, tracerouteResult, [](char c){return c == '\n';});
@@ -121,7 +136,7 @@ vector<string> Analyser::getMidIPs(string& IP)
     {
         if(midIP[0] >= 48 && midIP[0] <= 57)
         {
-            cout << logger_ << "mid IP: " << midIP << endl;
+            cout << logger_ << "mid IP: " << midIP;
 
             if(IP.find("192.168") != string::npos)
                 continue;
@@ -130,7 +145,7 @@ vector<string> Analyser::getMidIPs(string& IP)
         }
         else
         {
-            cout << "Wrong trace" << endl;
+            cout << logger_ << "Wrong trace";
         }
     }
 
@@ -139,6 +154,11 @@ vector<string> Analyser::getMidIPs(string& IP)
     return result;
 }
 
+/**
+ * @brief Analyser::findGeolocation method finding geolocation of device with given IP address
+ * @param IP
+ * @return pair of floats (lattitude and longitude) if API query succeeded, boost::none otherwise
+ */
 boost::optional< std::pair<float, float> > Analyser::findGeolocation(std::string& IP)
 {
     string request = "curl -s http://ip-api.com/line/" + IP + "?fields=lat,lon";
@@ -174,7 +194,7 @@ boost::optional< std::pair<float, float> > Analyser::findGeolocation(std::string
         return boost::none;
     }
 
-    cout << endl << geoLatitude << " " << geoLongtitude << endl;
+    cout << geoLatitude << " " << geoLongtitude;
 
     // pair x,y
     return make_pair(geoLongtitude, geoLatitude);
@@ -183,24 +203,22 @@ boost::optional< std::pair<float, float> > Analyser::findGeolocation(std::string
 
 void Analyser::updateTimestamps()
 {
-    unsigned temp_throughput;
     for(auto& linkData : linkDataMap_)
     {
-//        temp_throughput = linkData.second->updateTimestamps();
-
-//        if(temp_throughput > max_throughput)
-//        {
-//            max_throughput = temp_throughput;
-//        }
         linkData.second->updateTimestamps();
     }
-    // todo delete old timestamps
+}
+
+void Analyser::setIpAsNotResponding(string& IP)
+{
+    notRespondingIP_.insert(IP);
 }
 
 void Analyser::prepareAndSendDataPackage()
 {
     shared_ptr<DrawingPackage> packagePtr = make_shared<DrawingPackage>();
 
+    // no link data available - nothing to draw
     if(linkDataMap_.size() == 0)
     {
         return;
@@ -208,6 +226,12 @@ void Analyser::prepareAndSendDataPackage()
 
     for(auto& linkData : linkDataMap_)
     {
+        // all timestamps timed out - not drawing that connection
+        if(linkData.second->getAmountOfPackets() == 0)
+        {
+            continue;
+        }
+
         CurveData curveData;
         // both x and y from iplocation map
         curveData.x1 = ipLocations_[linkData.first.first].first;
@@ -231,7 +255,6 @@ void Analyser::prepareAndSendDataPackage()
         }
 
         packagePtr->drawDataPackage.push_back(curveData);
-        cout << "curve data added to package" << endl;
     }
 
     outputQueue_->push(packagePtr);

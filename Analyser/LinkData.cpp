@@ -29,11 +29,11 @@ unsigned LinkData::getAmountOfPackets()
 unsigned LinkData::updateTimestamps()
 {
     auto now = chrono::system_clock::now();
-    cout << "before update: " << to_string(timestamps_.size());
+    cout << logger_ << "before update: " << to_string(timestamps_.size());
     while(timestamps_.size() > 0 && chrono::duration_cast<chrono::milliseconds>(now - timestamps_.front()).count() > TIMEOUT)
     {
         timestamps_.erase(timestamps_.begin());
     }
-    cout << " after update: " << to_string(timestamps_.size()) << endl;
+    cout << logger_ << " after update: " << to_string(timestamps_.size());
     return timestamps_.size();
 }

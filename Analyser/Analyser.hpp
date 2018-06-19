@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <thread>
+#include <set>
 
 #include <boost/lockfree/spsc_queue.hpp>
 #include <boost/optional/optional.hpp>
@@ -30,12 +31,13 @@ private:
     std::string logger_;
     std::map< std::pair<std::string, std::string>, std::shared_ptr<LinkData> > linkDataMap_;
     std::map< std::string, std::pair<float, float> > ipLocations_;
-
+    std::set<std::string> notRespondingIP_;
     unsigned max_throughput = 10;
 
     void analyseNewPacket(std::string&);
     void updateTimestamps();
     void prepareAndSendDataPackage();
+    void setIpAsNotResponding(std::string&);
 
     boost::optional<std::pair<float, float> > findGeolocation(std::string&);
     std::vector<std::string> getMidIPs(std::string&);

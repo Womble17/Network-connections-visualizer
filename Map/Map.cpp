@@ -20,7 +20,6 @@ Map::Map(drawings_queue_ptr& inputQueue, QWidget *parent) :
     QWidget(parent),
     inputQueue_(inputQueue)
 {
-    cout  << endl << "MAP constructor";
     timerId_ = startTimer(10);
 }
 
@@ -36,11 +35,10 @@ void Map::paintEvent(QPaintEvent *e)
         return;
     }
 
-    //killTimer(timerId);
-    cout << "paint data: " << to_string(coordinates_->drawDataPackage.size()) << endl;
+    cout << endl << "paint data: " << to_string(coordinates_->drawDataPackage.size());
     for(const auto& data : coordinates_->drawDataPackage)
     {
-        cout << "TO DRAW: " << to_string(data.x1) << " " << to_string(data.y1) << " " << to_string(data.x2) << " " << to_string(data.y2) << endl;
+        cout << endl << "TO DRAW: " << to_string(data.x1) << " " << to_string(data.y1) << " " << to_string(data.x2) << " " << to_string(data.y2);
         if((data.x1 == 0.0 && data.y1 == 0.0) || (data.x2 == 0.0 && data.y2 == 0.0))
         {
             continue;
@@ -70,26 +68,23 @@ void Map::paintEvent(QPaintEvent *e)
     }
 }
 
-void Map::timerEvent(QTimerEvent *e) {
-
+void Map::timerEvent(QTimerEvent *e)
+{
     Q_UNUSED(e);
 
     if(inputQueue_->pop(coordinates_))
     {
-        for(auto& data : coordinates_->drawDataPackage)
-        {
-            cout << to_string(data.x1) << " " << to_string(data.x2) << endl;
-        }
-
         repaint();
     }
 }
 
-int Map::lonToPixels(float lat){
-
+// TODO: make transformation more generic
+int Map::lonToPixels(float lat)
+{
     return 700 + (int)(lat * 686/180);
 }
 
-int Map::latToPixels(float lon){
+int Map::latToPixels(float lon)
+{
     return 392 - (int)(lon * 356/90);
 }
